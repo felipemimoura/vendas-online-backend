@@ -23,6 +23,7 @@ export class UserService {
     // Save data into the database
     return this.userRepository.save({
       ...createUser,
+      typeUser: 1,
       password: passwordHashed,
     });
   }
