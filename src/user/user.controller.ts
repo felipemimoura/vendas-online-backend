@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { CreateUserDTO } from './dtos/createUser.dto';
 import { UserService } from './user.service';
-import { IUser } from './interfaces/user.interface';
+import { UserEntity } from './interfaces/user.entity';
 // Create a new Controller
 // command: nest g controller <<controllerName>>
 
@@ -11,12 +11,12 @@ export class UserController {
   // Constructor should be access all services
   constructor(private readonly userService: UserService) {}
   @Get()
-  async getAllUsers(): Promise<IUser[]> {
+  async getAllUsers(): Promise<UserEntity[]> {
     return this.userService.getAllUsers();
   }
   // Method post recive parameters
   @Post()
-  async createUser(@Body() createUser: CreateUserDTO): Promise<IUser> {
+  async createUser(@Body() createUser: CreateUserDTO): Promise<UserEntity> {
     return this.userService.createUser(createUser);
   }
 }
