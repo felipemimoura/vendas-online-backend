@@ -1,32 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDTO } from './dtos/createUser.dto';
-import { IUser } from './interfaces/user.interface';
+import { UserEntity } from './interfaces/user.entity';
 import * as bcrypt from 'bcrypt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 // Create a new Service
-// command: nest g service <<controllerName>>
+// command: nest g service <<serviceName>>
 
-// Controller are responsible for receiving to logic about application
+// service are responsible for receiving to logic about application
 @Injectable()
 export class UserService {
-  private users: IUser[] = [];
-  async createUser(createUser: CreateUserDTO): Promise<IUser> {
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+  ) {}
+  async createUser(createUser: CreateUserDTO): Promise<UserEntity> {
     // Create password cryptography
     const saltOrRounds = 10;
     const passwordHashed = await bcrypt.hash(createUser.password, saltOrRounds);
 
-    const user: IUser = {
+    // Save data into the database
+    return this.userRepository.save({
       ...createUser,
-      id: this.users.length + 1,
       password: passwordHashed,
-    };
-
-    this.users.push(user);
-
-    return user;
+    });
   }
 
-  async getAllUsers(): Promise<IUser[]> {
-    return this.users;
+  async getAllUsers(): Promise<UserEntity[]> {
+    // Return all data from database
+    return this.userRepository.find();
   }
 }
