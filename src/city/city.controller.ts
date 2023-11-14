@@ -14,22 +14,6 @@ export class CityController {
   async getAllCitiesByStateId(
     @Param('stateId') stateId: number,
   ): Promise<CityEntity[]> {
-    const cachedCities: CityEntity[] = await this.cacheManager.get(
-      `state_${stateId}`,
-    );
-
-
-    // Check if has cities on cache
-    if (cachedCities) {
-      return cachedCities;
-    }
-
-    // Get all cities
-    const cities = await this.cityService.getAllCitiesByStateId(stateId);
-
-    //Save data on Cache
-    await this.cacheManager.set(`state_${stateId}`, cities);
-
-    return cities;
+    return this.cityService.getAllCitiesByStateId(stateId);
   }
 }
