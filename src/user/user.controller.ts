@@ -1,7 +1,14 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { CreateUserDTO } from './dtos/createUser.dto';
+import { ReturnUserDto } from './dtos/returnUser.dto';
 import { UserService } from './user.service';
-import { UserEntity } from './entites/user.entity';
 // Create a new Controller
 // command: nest g controller <<controllerName>>
 
@@ -11,12 +18,15 @@ export class UserController {
   // Constructor should be access all services
   constructor(private readonly userService: UserService) {}
   @Get()
-  async getAllUsers(): Promise<UserEntity[]> {
-    return this.userService.getAllUsers();
+  async getAllUsers(): Promise<ReturnUserDto[]> {
+    return (await this.userService.getAllUsers()).map(
+      (userEntity) => new ReturnUserDto(userEntity),
+    );
   }
-  // Method post recive parameters
-  @Post()
-  async createUser(@Body() createUser: CreateUserDTO): Promise<UserEntity> {
+
+  @UsePipes(ValidationPipe)
+  @Post() // Method post recive parameters
+  async createUser(@Body() createUser: CreateUserDTO): Promise<ReturnUserDto> {
     return this.userService.createUser(createUser);
   }
 }
