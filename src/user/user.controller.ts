@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   UsePipes,
   ValidationPipe,
@@ -28,5 +29,12 @@ export class UserController {
   @Post() // Method post recive parameters
   async createUser(@Body() createUser: CreateUserDTO): Promise<ReturnUserDto> {
     return this.userService.createUser(createUser);
+  }
+
+  @Get('/:userId')
+  async getUserById(@Param('userId') userId: number): Promise<ReturnUserDto> {
+    return new ReturnUserDto(
+      await this.userService.getUserByUsingRelations(userId),
+    );
   }
 }
